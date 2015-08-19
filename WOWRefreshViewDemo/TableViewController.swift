@@ -23,6 +23,9 @@ class TableViewController: UIViewController {
 
             self.reloadData()
         })
+        refreshView.backgroundColor = UIColor.lightGrayColor()
+        refreshView.lineColor = UIColor.orangeColor()
+        refreshView.lineWidth = 2
         loadData()
     }
 
@@ -41,8 +44,8 @@ class TableViewController: UIViewController {
     // first load
     func loadData() {
         
-//        self.refreshView.triggerRefreshing(true)
-//        reloadData()
+        self.refreshView.startRefreshing()
+        reloadData()
     }
     
     func reloadData() {

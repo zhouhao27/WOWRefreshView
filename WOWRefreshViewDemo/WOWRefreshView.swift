@@ -12,22 +12,24 @@ import UIKit
 
 public class WOWRefreshView: UIView {
 
+    // MARK: definitions
     typealias RefreshHandler = () -> Void
     enum ScrollDirection {
         case Horizontal
         case Vertical
     }
     
+    // MARK: public properties
     public var lineWidth : CGFloat = 2.0
     public var lineColor : UIColor = UIColor.blackColor()
     
-    private var scrollDirection : ScrollDirection = .Vertical
-    private var forbidContentInsetChanges : Bool = false
-    
+    // MARK: constants
     private let kIndicatorWidth         : CGFloat = 40.0
     private let kPadding                : CGFloat = 20.0
     private let kThrehold               : CGFloat = 20.0
     
+    // MARK: private properties
+    private var scrollDirection : ScrollDirection = .Vertical
     private var scrollView : UIScrollView!
     private var refreshHandler : RefreshHandler!
     private var rippleIndicator : WOWRippleIndicator?
@@ -39,7 +41,6 @@ public class WOWRefreshView: UIView {
     }
     private var readyToRefresh : Bool = false {
         didSet {
-            print("readyToRefresh=\(readyToRefresh)")
             if readyToRefresh {
                 // show label release to refresh
 
@@ -55,7 +56,7 @@ public class WOWRefreshView: UIView {
         self.refreshHandler = refreshHandler
         self.frame = CGRectMake(0,0,scrollView.frame.size.width,0)
         
-        self.backgroundColor = UIColor.yellowColor()
+        //self.backgroundColor = UIColor.yellowColor()
         scrollView.addObserver(self, forKeyPath: "contentOffset",options: [.New,.Old], context: nil)
         scrollView.addSubview(self)
     }
@@ -65,6 +66,7 @@ public class WOWRefreshView: UIView {
         fatalError("call init(ScrollView...) instead")
     }
     
+    // MARK: public methods
     public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         
         print(scrollView.contentOffset)
@@ -73,18 +75,20 @@ public class WOWRefreshView: UIView {
         
         if self.scrollView.contentOffset.y <= -kIndicatorWidth {
             
-            // circle animation
-            let percentage = min(1,(-self.scrollView.contentOffset.y - kIndicatorWidth) / kIndicatorWidth)
-            createIndicator()
+            if !refreshing {
+                let percentage = min(1,(-self.scrollView.contentOffset.y - kIndicatorWidth) / kIndicatorWidth)
+                createIndicator()
+                
+                rippleIndicator!.degree = percentage
+                readyToRefresh = percentage == 1
+                
+                if scrollView.contentOffset.y < -2*kIndicatorWidth {
+                    readyToRefresh = true
+                }
+            }
             
             let center = CGPointMake(self.center.x - kIndicatorWidth / 2, -self.center.y - kIndicatorWidth / 2)
             rippleIndicator!.frame = CGRect(origin: center, size: rippleIndicator!.bounds.size)
-            rippleIndicator!.degree = percentage
-            readyToRefresh = percentage == 1
-            
-            if scrollView.contentOffset.y < -2*kIndicatorWidth {
-                readyToRefresh = true
-            }
             
             let offset = (2 * kIndicatorWidth + kPadding)
             if self.scrollView.contentOffset.y < -offset {
@@ -94,7 +98,7 @@ public class WOWRefreshView: UIView {
             removeIndicator()
         }
         
-        if !scrollView.dragging && scrollView.decelerating && !self.forbidContentInsetChanges && readyToRefresh {
+        if !scrollView.dragging && scrollView.decelerating && readyToRefresh {
             startRefreshing()
         }
     }
@@ -105,7 +109,6 @@ public class WOWRefreshView: UIView {
             let offset = 2 * kIndicatorWidth
             scrollView.contentInset = UIEdgeInsetsMake(offset, 0, 0, 0)
             scrollView.setContentOffset(CGPointMake(0, -offset), animated: true)
-            forbidContentInsetChanges = true
             refresh()
         }
     }
@@ -124,9 +127,9 @@ public class WOWRefreshView: UIView {
         }
     }
     
+    // MARK: internal methods
     func returnToDefaultState() {
     
-        self.forbidContentInsetChanges = false
         UIView.animateWithDuration(0.8, delay: 0,
             usingSpringWithDamping: 0.4,
             initialSpringVelocity: 0.8,
@@ -160,7 +163,6 @@ public class WOWRefreshView: UIView {
     
     func refresh() {
         
-        print("refresh")
         if !refreshing {
             if rippleIndicator != nil {
                 rippleIndicator!.degree = 0
