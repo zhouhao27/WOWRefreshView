@@ -13,10 +13,15 @@ class CollectionViewController: UIViewController {
     @IBOutlet var collectionView: UICollectionView!
     
     var data = [String]()
+    var refreshView : WOWRefreshView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        refreshView = WOWRefreshView(scrollView: self.collectionView, completion: { () -> Void in
+            
+            self.reloadData()
+        })
         loadData()
     }
 
@@ -39,19 +44,22 @@ class CollectionViewController: UIViewController {
     
     func reloadData() {
         
-        data = [String]()
-        data.append("data 1")
-        data.append("data 2")
-        data.append("data 3")
-        data.append("data 4")
-        data.append("data 5")
-        data.append("data 6")
-        data.append("data 7")
-        data.append("data 8")
-        data.append("data 9")
-        data.append("data 10")
-        
-        collectionView.reloadData()
+        GCD.delay(2) { () -> () in
+            self.data = [String]()
+            self.data.append("data 1")
+            self.data.append("data 2")
+            self.data.append("data 3")
+            self.data.append("data 4")
+            self.data.append("data 5")
+            self.data.append("data 6")
+            self.data.append("data 7")
+            self.data.append("data 8")
+            self.data.append("data 9")
+            self.data.append("data 10")
+            
+            self.collectionView.reloadData()
+            self.refreshView.endRefreshing()
+        }
     }
     
 }
