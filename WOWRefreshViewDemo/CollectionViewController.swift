@@ -18,10 +18,14 @@ class CollectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        refreshView = WOWRefreshView(scrollView: self.collectionView, completion: { () -> Void in
-            
+        refreshView = WOWRefreshView(scrollView: self.collectionView,direction: .Horizontal,completion: { () -> Void in
             self.reloadData()
         })
+        
+        refreshView.backgroundColor = UIColor.lightGrayColor()
+        refreshView.lineColor = UIColor.orangeColor()
+        refreshView.lineWidth = 2
+        
         loadData()
     }
 
@@ -39,6 +43,7 @@ class CollectionViewController: UIViewController {
 
     func loadData() {
         
+        refreshView.startRefreshing()
         reloadData()
     }
     

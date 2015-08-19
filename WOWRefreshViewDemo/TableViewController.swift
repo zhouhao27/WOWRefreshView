@@ -19,7 +19,7 @@ class TableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        refreshView = WOWRefreshView(scrollView: self.tableView, completion: { () -> Void in
+        refreshView = WOWRefreshView(scrollView: self.tableView, direction: .Vertical, completion: { () -> Void in
 
             self.reloadData()
         })

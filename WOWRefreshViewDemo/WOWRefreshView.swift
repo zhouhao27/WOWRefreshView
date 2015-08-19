@@ -14,7 +14,7 @@ public class WOWRefreshView: UIView {
 
     // MARK: definitions
     typealias RefreshHandler = () -> Void
-    enum ScrollDirection {
+    public enum ScrollDirection {
         case Horizontal
         case Vertical
     }
@@ -30,16 +30,16 @@ public class WOWRefreshView: UIView {
     
     // MARK: private properties
     private var scrollDirection : ScrollDirection = .Vertical
-    private var scrollView : UIScrollView!
-    private var refreshHandler : RefreshHandler!
+    private var scrollView      : UIScrollView!
+    private var refreshHandler  : RefreshHandler!
     private var rippleIndicator : WOWRippleIndicator?
-    private var refreshing  : Bool = false {
+    private var refreshing      : Bool = false {
         didSet {
-            scrollView.pagingEnabled = !refreshing
-            scrollView.scrollEnabled = !refreshing
+//            scrollView.pagingEnabled = !refreshing
+//            scrollView.scrollEnabled = !refreshing
         }
     }
-    private var readyToRefresh : Bool = false {
+    private var readyToRefresh  : Bool = false {
         didSet {
             if readyToRefresh {
                 // show label release to refresh
@@ -49,14 +49,15 @@ public class WOWRefreshView: UIView {
     }
     
     // MARK: initialization
-    public init(scrollView : UIScrollView, completion refreshHandler: (()->Void)) {
+    public init(scrollView : UIScrollView, direction : ScrollDirection, completion refreshHandler: (()->Void)) {
         super.init(frame: CGRectZero)
 
         self.scrollView = scrollView
         self.refreshHandler = refreshHandler
-        self.frame = CGRectMake(0,0,scrollView.frame.size.width,0)
+        self.scrollDirection = direction
         
-        //self.backgroundColor = UIColor.yellowColor()
+//        self.frame = scrollDirection == .Vertical ? CGRectMake(0,0,scrollView.frame.size.width,0) : CGRectMake(0,0,0,scrollView.frame.size.height)
+
         scrollView.addObserver(self, forKeyPath: "contentOffset",options: [.New,.Old], context: nil)
         scrollView.addSubview(self)
     }
@@ -69,20 +70,25 @@ public class WOWRefreshView: UIView {
     // MARK: public methods
     public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         
-        print(scrollView.contentOffset)
-        self.frame = CGRectMake(0, 0,
-            scrollView.frame.size.width, scrollView.contentOffset.y)
+        print("scrollView.contentOffset=\(scrollView.contentOffset)")
         
-        if self.scrollView.contentOffset.y <= -kIndicatorWidth {
+        let offset = scrollDirection == .Vertical ? scrollView.contentOffset.y : scrollView.contentOffset.x
+        let w = scrollDirection == .Vertical ? scrollView.frame.size.width : offset
+        let h = scrollDirection == .Vertical ? offset :scrollView.frame.size.height
+        
+        self.frame = CGRectMake(0, 0, w, h)
+        print(frame)
+        
+        if offset <= -kIndicatorWidth {
             
             if !refreshing {
-                let percentage = min(1,(-self.scrollView.contentOffset.y - kIndicatorWidth) / kIndicatorWidth)
+                let percentage = min(1,(-offset - kIndicatorWidth) / kIndicatorWidth)
                 createIndicator()
                 
                 rippleIndicator!.degree = percentage
                 readyToRefresh = percentage == 1
                 
-                if scrollView.contentOffset.y < -2*kIndicatorWidth {
+                if offset < -2*kIndicatorWidth {
                     readyToRefresh = true
                 }
             }
@@ -90,9 +96,9 @@ public class WOWRefreshView: UIView {
             let center = CGPointMake(self.center.x - kIndicatorWidth / 2, -self.center.y - kIndicatorWidth / 2)
             rippleIndicator!.frame = CGRect(origin: center, size: rippleIndicator!.bounds.size)
             
-            let offset = (2 * kIndicatorWidth + kPadding)
-            if self.scrollView.contentOffset.y < -offset {
-                self.scrollView.contentOffset = CGPointMake(0, -offset)
+            let threhold = (2 * kIndicatorWidth + kPadding)
+            if offset < -threhold {
+                self.scrollView.contentOffset = scrollDirection == .Vertical ? CGPointMake(0, -threhold) : CGPointMake(-threhold,0)
             }
         } else {
             removeIndicator()
@@ -107,8 +113,9 @@ public class WOWRefreshView: UIView {
     
         if !refreshing {
             let offset = 2 * kIndicatorWidth
-            scrollView.contentInset = UIEdgeInsetsMake(offset, 0, 0, 0)
-            scrollView.setContentOffset(CGPointMake(0, -offset), animated: true)
+            scrollView.contentInset = scrollDirection == .Vertical ? UIEdgeInsetsMake(offset, 0, 0, 0) : UIEdgeInsetsMake(0, offset, 0, 0)
+            let point = scrollDirection == .Vertical ? CGPointMake(0, -offset) : CGPointMake(-offset,0)
+            scrollView.setContentOffset(point, animated: true)
             refresh()
         }
     }

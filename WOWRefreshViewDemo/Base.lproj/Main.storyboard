@@ -106,11 +106,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="0L3-0k-0nC">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="182"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="120"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.0" green="0.56470588239999997" blue="0.78039215689999997" alpha="0.84999999999999998" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="182" id="kKE-Ot-eUR"/>
+                                    <constraint firstAttribute="height" constant="120" id="kKE-Ot-eUR"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="zPe-BH-PyB">
                                     <size key="itemSize" width="60" height="90"/>
@@ -120,7 +120,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionView" id="kvY-eA-shg" customClass="CollectionCell" customModule="WOWRefreshViewDemo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="46" width="60" height="90"/>
+                                        <rect key="frame" x="0.0" y="15" width="60" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="60" height="90"/>
