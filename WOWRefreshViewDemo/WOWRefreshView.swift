@@ -8,7 +8,7 @@
 //  Copyright © 2015 Zhou Hao. All rights reserved.
 //
 
-// TODO: 1. Decide the direction automatically
+// TODO: 1. Decide the direction automatically. Currently only support pull down and right
 //       2. Pull from any side of the screen
 //       3. Decouple the animation from the refresh view, support any animation who follow the certain protocol
 

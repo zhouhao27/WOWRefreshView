@@ -39,18 +39,13 @@ public class WOWRippleIndicator: UIView {
     public var degree : CGFloat = 0 {
         
         didSet {            
-            // TODO: make it animated
-//            if degree == 0 && oldValue > 0{
-//                print("here")
-//            }
-//            let anim = CABasicAnimation(keyPath: "strokeEnd")
-//            anim.duration = 0.2
-//            anim.fromValue = oldValue
-//            anim.toValue = degree
-//            anim.removedOnCompletion = false
-//            anim.fillMode = kCAFillModeBackwards
-//            ring.addAnimation(anim, forKey: "degree")
-            ring.strokeEnd = degree
+            let anim = CABasicAnimation(keyPath: "strokeEnd")
+            anim.duration = 0.8
+            anim.fromValue = oldValue
+            anim.toValue = degree
+            anim.removedOnCompletion = false
+            anim.fillMode = kCAFillModeBackwards
+            ring.addAnimation(anim, forKey: "degree")
         }
     }
     
