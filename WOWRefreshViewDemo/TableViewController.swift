@@ -19,13 +19,12 @@ class TableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        refreshView = WOWRefreshView(scrollView: self.tableView, direction: .Vertical, completion: { () -> Void in
+        refreshView = WOWRefreshView(scrollView: self.tableView, direction: .Down, completion: { () -> Void in
 
             self.reloadData()
         })
         refreshView.backgroundColor = UIColor.lightGrayColor()
-        refreshView.lineColor = UIColor.orangeColor()
-        refreshView.lineWidth = 2
+        refreshView.tintColor = UIColor.orangeColor()
         loadData()
     }
 
